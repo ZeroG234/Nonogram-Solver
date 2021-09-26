@@ -82,9 +82,11 @@ def solve_nonogram_matrix(vectors_row, vectors_column, size):
 
     # Se va a cambiar cada fila y colmuna según el relleno que tenga
     # y cómo debe estar rellenado.
+    count = 0
     while(np.any(nonogram_matrix == 3)):
-        for i in range(max(size)):
-            try:    
+        matrix_rectifier = np.copy(nonogram_matrix)
+        try:
+            for i in range(max(size)):
                 if(i < min(size)):
                     nonogram_matrix[i, :] = new_row(vectors_row[i], size[0], nonogram_matrix[i, :])
                     nonogram_matrix[:, i] = new_row(vectors_column[i], size[1], nonogram_matrix[:, i])
@@ -92,10 +94,16 @@ def solve_nonogram_matrix(vectors_row, vectors_column, size):
                     nonogram_matrix[:, i] = new_row(vectors_column[i], size[1], nonogram_matrix[:, i])
                 else:
                     nonogram_matrix[i, :] = new_row(vectors_row[i], size[0], nonogram_matrix[i, :])
-            except:
-                break
-        if(np.all(nonogram_matrix == 3)):
+        except:
             break
+
+        if(np.all(matrix_rectifier == nonogram_matrix)):
+            if(count < 2):
+                count += 1
+            else:
+                break
+        else:
+            count = 0
     return nonogram_matrix
 
 def rows_columns_creator(size):
@@ -126,6 +134,7 @@ def rows_columns_creator(size):
 
     return (vectors_row, vectors_column)
 
+# Activar lo siguiente si no tienes ya escritas los vectores filas y columnas.
 n_rows = int(input("Inserte el número de filas "))
 n_columns = int(input("Inserte el número de columnas "))
 size = np.array([n_rows, n_columns])
@@ -133,3 +142,6 @@ size = np.array([n_rows, n_columns])
 (vectors_row, vectors_column) = rows_columns_creator(size)
 
 matrix = solve_nonogram_matrix(vectors_row, vectors_column, size)
+
+# Rectificador.
+#matrix[i, :] = new_row(vectors_row[i], 15, matrix[i,:])
